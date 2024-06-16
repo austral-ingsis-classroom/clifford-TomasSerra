@@ -1,0 +1,103 @@
+@startuml
+skinparam class {
+    BackgroundColor<<Command>> LightYellow
+    BackgroundColor<<Composite>> LightGreen
+}
+
+class CLI {
+    - fileSystem: VirtualFileSystem
+    - parser: CommandParser
+    + executeCommand(input: String): void
+}
+
+class CommandParser {
+    + parse(input: String): Command
+}
+
+class VirtualFileSystem {
+    - root: Directory
+    + createFile(path: String): void
+    + createDirectory(path: String): void
+    + delete(path: String): void
+    + list(path: String): List<String>
+    + move(sourcePath: String, destinationPath: String): void
+    + getRoot(): Directory
+}
+
+interface Command <<Command>> {
+    + execute(): void
+}
+
+class CreateFileCommand <<Command>> {
+    - fileSystem: VirtualFileSystem
+    - path: String
+    + execute(): void
+}
+
+class CreateDirectoryCommand <<Command>> {
+    - fileSystem: VirtualFileSystem
+    - path: String
+    + execute(): void
+}
+
+class DeleteCommand <<Command>> {
+    - fileSystem: VirtualFileSystem
+    - path: String
+    + execute(): void
+}
+
+class ListCommand <<Command>> {
+    - fileSystem: VirtualFileSystem
+    - path: String
+    + execute(): void
+}
+
+class MoveCommand <<Command>> {
+    - fileSystem: VirtualFileSystem
+    - sourcePath: String
+    - destinationPath: String
+    + execute(): void
+}
+
+class PwdCommand <<Command>> {
+    - fileSystem: VirtualFileSystem
+    + execute(): String
+}
+
+interface FileSystemComponent <<Composite>> {
+    + getName(): String
+}
+
+class File <<Composite>> {
+    - name: String
+    + getName(): String
+}
+
+class Directory <<Composite>> {
+    - name: String
+    - components: List<FileSystemComponent>
+    - parent: Directory
+    + getName(): String
+    + add(component: FileSystemComponent): void
+    + remove(component: FileSystemComponent): void
+    + getChild(index: int): FileSystemComponent
+    + list(): List<String>
+}
+
+CLI --> VirtualFileSystem
+CLI --> CommandParser
+CLI --> Command
+
+CommandParser --> Command
+
+Command <|-- CreateFileCommand
+Command <|-- CreateDirectoryCommand
+Command <|-- DeleteCommand
+Command <|-- ListCommand
+Command <|-- MoveCommand
+
+VirtualFileSystem --> Directory
+FileSystemComponent <|-- File
+FileSystemComponent <|-- Directory
+FileSystemComponent --* Directory
+@enduml
