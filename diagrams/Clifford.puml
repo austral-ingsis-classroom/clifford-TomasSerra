@@ -95,6 +95,7 @@ Command <|-- CreateDirectoryCommand
 Command <|-- DeleteCommand
 Command <|-- ListCommand
 Command <|-- MoveCommand
+Command <|-- PwdCommand
 
 VirtualFileSystem --> Directory
 FileSystemComponent <|-- File
