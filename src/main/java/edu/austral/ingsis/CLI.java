@@ -4,6 +4,7 @@ import edu.austral.ingsis.commands.Command;
 import edu.austral.ingsis.commands.CommandParser;
 import edu.austral.ingsis.fileSystem.VirtualFileSystem;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class CLI {
   private final VirtualFileSystem fileSystem;
@@ -18,6 +19,6 @@ public class CLI {
     String[] args = stringCommand.split(" ");
     Command command = parser.parse(args[0]);
     String[] params = Arrays.copyOfRange(args, 1, args.length);
-    return command.execute(Arrays.stream(params).toList(), fileSystem);
+    return command.execute(Arrays.stream(params).collect(Collectors.toList()), fileSystem);
   }
 }
