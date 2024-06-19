@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Directory implements FileSystemComponent{
     private final String name;
-    private final Set<FileSystemComponent> components = new HashSet<>();
+    private final List<FileSystemComponent> components = new ArrayList<>();
     private final Directory parent;
 
     public Directory(String name) {
@@ -17,8 +17,20 @@ public class Directory implements FileSystemComponent{
         this.parent = parent;
     }
 
-    public void add(FileSystemComponent component) {
+    public String add(Directory component) {
+        if(components.contains(component)){
+            return "'"+component.name()+"'" +" already exists";
+        }
         components.add(component);
+        return "'"+component.name()+"'" +" directory created";
+    }
+
+    public String add(File component) {
+        if(components.contains(component)){
+            return "'"+component.name()+"'" +" already exists";
+        }
+        components.add(component);
+        return "'"+component.name()+"'" +" file created";
     }
 
     @Override

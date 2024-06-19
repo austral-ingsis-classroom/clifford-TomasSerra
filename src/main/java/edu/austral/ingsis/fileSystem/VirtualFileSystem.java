@@ -1,13 +1,12 @@
 package edu.austral.ingsis.fileSystem;
 
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class VirtualFileSystem {
     private Directory root;
 
     public VirtualFileSystem() {
-        this.root = new Directory("C", new Directory("/"));
+        this.root = new Directory("/");
     }
 
     public Directory getRoot() {
@@ -16,14 +15,12 @@ public class VirtualFileSystem {
 
     public String createFile(String name) {
         File file = new File(name);
-        root.add(file);
-        return "'" + name + "'" + " file created";
+        return root.add(file);
     }
 
     public String createDirectory(String name, Directory parent) {
         Directory directory = new Directory(name, parent);
-        root.add(directory);
-        return "'" + name +"'" + " directory created";
+        return root.add(directory);
     }
 
     public String delete(String name, String type) {
@@ -32,6 +29,9 @@ public class VirtualFileSystem {
 
     public String moveTo(String path) {
         if(path.equals("..")){
+            if(Objects.equals(root.name(), "/")){
+                return "moved to directory '/'";
+            }
             if(root != null && root.getParent() != null){
                 root = root.getParent();
                 return "moved to directory " + "'" + root.name() + "'";
@@ -51,21 +51,24 @@ public class VirtualFileSystem {
         return "moved to directory " + "'" + directories[directories.length-1] + "'";
     }
 
-    public List<String> listChilds(String order) {
-        List<String> childs = root.getChilds();
-        if(order.equals("--ord=asc")){
-            childs.sort(String::compareTo);
-        } else if(order.equals("--ord=desc")){
-            childs.sort(Comparator.reverseOrder());
-        }
-        return childs;
+    public List<String> listChilds() {
+        return root.getChilds();
     }
 
     public String getActualPath() {
-        StringBuilder actualPath = new StringBuilder();
-        while (root.getParent() != null) {
-            actualPath.append("/").append(root.getParent().name());
+        List<String> directories = new ArrayList<>();
+        Directory actualRoot = root;
+        directories.add(actualRoot.name());
+        while (actualRoot.getParent() != null) {
+            actualRoot = actualRoot.getParent();
+            if(!Objects.equals(actualRoot.name(), "/")){
+                directories.add(actualRoot.name());
+            }
         }
-        return actualPath.toString();
+        List<String> reversedDirectories = new ArrayList<>();
+        for (int i = directories.size() - 1; i >= 0; i--) {
+            reversedDirectories.add(directories.get(i));
+        }
+        return "/" + String.join("/", reversedDirectories);
     }
 }
